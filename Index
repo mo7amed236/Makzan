@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#1E3A5F">
+<title>عروض الأسعار - المخزن</title>
+<style>
+:root{
+  --navy:#1E3A5F; --ink:#0F172A; --muted:#475569; --bg:#F1F5F9;
+  --card:#FFFFFF; --line:#CBD5E1; --line-strong:#94A3B8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:"Segoe UI",Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+button,input,textarea{font-family:inherit;font-size:inherit}
+.app{max-width:480px;margin:0 auto;min-height:100vh}
+
+header{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:12px 14px 10px}
+.top{display:flex;align-items:center;justify-content:space-between}
+h1{font-size:18px;margin:0;font-weight:800;display:flex;align-items:center;gap:8px}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#4ADE80;display:inline-block;transition:background .3s}
+.sync-dot.loading{background:#FACC15;animation:pulse 1s infinite}
+.sync-dot.err{background:#F87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.icon-btn{background:rgba(255,255,255,.2);border:0;color:#fff;width:38px;height:38px;border-radius:10px;font-size:18px;cursor:pointer}
+.icon-btn:active{background:rgba(255,255,255,.35)}
+.tabs{display:flex;gap:8px;margin-top:10px}
+.tab{flex:1;padding:9px 6px;border-radius:10px;border:0;background:rgba(255,255,255,.16);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.tab.on{background:#fff;color:var(--navy)}
+
+.tools{padding:12px 14px 0}
+.search{width:100%;padding:11px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:#fff;color:var(--ink)}
+.search::placeholder{color:var(--muted)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 14px 2px}
+.fc{flex:none;padding:6px 13px;border-radius:99px;border:1.5px solid var(--line-strong);background:#fff;color:var(--ink);font-size:13px;font-weight:700;cursor:pointer}
+.fc.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+.list{padding:12px 14px 28px;display:flex;flex-direction:column;gap:10px}
+.card{display:block;width:100%;text-align:right;background:var(--card);color:var(--ink);border:1px solid var(--line);border-right:6px solid var(--navy);border-radius:14px;padding:12px 14px;cursor:pointer}
+.card:active{background:#F8FAFC}
+.c0{border-right-color:#B45309}.c1{border-right-color:#1D4ED8}.c2{border-right-color:#15803D}.c3{border-right-color:#64748B}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.no{font-weight:800;font-size:17px}
+.tag{padding:3px 11px;border-radius:99px;font-size:13px;font-weight:700}
+.st0{background:#FEF3C7;color:#78350F}
+.st1{background:#DBEAFE;color:#1E3A8A}
+.st2{background:#DCFCE7;color:#14532D}
+.st3{background:#E2E8F0;color:#334155}
+.client{font-weight:700;font-size:16px;margin-top:4px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;color:var(--muted);font-size:13px;font-weight:600}
+.late{background:#FEE2E2;color:#991B1B;padding:0 8px;border-radius:99px}
+.note{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);color:var(--ink);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;font-weight:600}
+
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.ov.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:480px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom))}
+.s-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.s-no{font-size:20px;font-weight:800}
+.s-client{font-size:16px;font-weight:700}
+.s-date{color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
+.x{background:#E2E8F0;border:0;color:var(--ink);width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;flex:none}
+label{display:block;font-weight:700;font-size:13px;margin:14px 0 6px;color:var(--ink)}
+.inp{width:100%;padding:11px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:#fff;color:var(--ink)}
+textarea.inp{min-height:76px;resize:vertical}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sb{padding:13px 8px;border-radius:12px;border:1.5px solid var(--line-strong);background:#fff;color:var(--ink);font-weight:800;font-size:15px;cursor:pointer}
+.sb.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.sb:disabled,.inp:disabled{opacity:.6}
+.hint{color:var(--muted);font-size:12px;margin-top:6px;font-weight:600}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:12px;font-weight:700;font-size:14px;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="top">
+      <h1><span class="sync-dot" id="dot" title="حالة الاتصال"></span> 📦 عروض الأسعار - المخزن</h1>
+      <button class="icon-btn" id="refresh" aria-label="تحديث">⟳</button>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="t-active">الحالية</button>
+      <button class="tab" id="t-ended">منتهي</button>
+    </div>
+  </header>
+
+  <div class="tools"><input class="search" id="q" type="search" placeholder="بحث برقم العرض أو اسم العميل"></div>
+  <div class="chips" id="chips"></div>
+  <div class="list" id="list"><div class="empty">جاري التحميل…</div></div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="sheet">
+    <div class="s-head">
+      <div>
+        <div class="s-no" id="s-no"></div>
+        <div class="s-client" id="s-client"></div>
+        <div class="s-date" id="s-date"></div>
+      </div>
+      <button class="x" id="close" aria-label="إغلاق">✕</button>
+    </div>
+
+    <label for="cartons">كمية الكراتين</label>
+    <input class="inp" id="cartons" type="number" inputmode="numeric" min="0" placeholder="اكتب الكمية">
+
+    <label for="notes">ملاحظات</label>
+    <textarea class="inp" id="notes" placeholder="اكتب الملاحظة قبل تغيير الحالة"></textarea>
+
+    <label for="by">اسمك (يظهر في السجل والإشعار)</label>
+    <input class="inp" id="by" type="text" placeholder="اختياري">
+
+    <label>تغيير الحالة</label>
+    <div class="sg" id="sg"></div>
+    <div class="hint">الضغط على الحالة يحفظ ويرسل الإشعار فوراً.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============== ضع رابط Google Apps Script Web App هنا ==============
+var API_URL = "ضع_رابط_تطبيق_الويب_هنا"; 
+// مثال: "https://script.google.com/macros/s/AKfycbx.../exec"
+
+var ST = ['تسعير', 'تحت التجهيز', 'تم التجهيز', 'منتهي'];
+var CACHE_KEY = 'roka_quotes_cache_v1';
+var state = { orders: [], tab: 'active', filter: 'all', q: '', cur: null, busy: false };
+var $ = function (id) { return document.getElementById(id); };
+
+function el(t, c, x) {
+  var e = document.createElement(t);
+  if (c) e.className = c;
+  if (x != null) e.textContent = x;
+  return e;
+}
+
+function setDot(status) {
+  var d = $('dot');
+  d.className = 'sync-dot' + (status ? ' ' + status : '');
+}
+
+// الاتصال بالسيرفر عبر fetch و JSON
+function fetchOrdersAPI() {
+  if (!API_URL || API_URL.indexOf('http') !== 0) {
+    return Promise.reject(new Error('يرجى وضع رابط API_URL في الكود'));
+  }
+  setDot('loading');
+  return fetch(API_URL + '?t=' + Date.now(), {
+    method: 'GET',
+    redirect: 'follow'
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('خطأ في الاتصال بالخادم (' + res.status + ')');
+    return res.json();
+  })
+  .then(function(json) {
+    if (!json.ok) throw new Error(json.error || 'خطأ في جلب البيانات');
+    setDot('');
+    return json.data;
+  })
+  .catch(function(err) {
+    setDot('err');
+    throw err;
+  });
+}
+
+function updateOrderAPI(no, status, cartons, notes, by) {
+  setDot('loading');
+  return fetch(API_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // يمنع حظر CORS في جوجل
+    body: JSON.stringify({
+      action: 'updateOrder',
+      no: no,
+      status: status,
+      cartons: cartons,
+      notes: notes,
+      by: by
+    })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('خطأ في الحفظ (' + res.status + ')');
+    return res.json();
+  })
+  .then(function(json) {
+    if (!json.ok) throw new Error(json.error || 'فشل التحديث');
+    setDot('');
+    return json.data;
+  })
+  .catch(function(err) {
+    setDot('err');
+    throw err;
+  });
+}
+
+var tt;
+function toast(m) {
+  var t = $('toast'); t.textContent = m; t.classList.add('on');
+  clearTimeout(tt); tt = setTimeout(function () { t.classList.remove('on'); }, 2500);
+}
+
+function load(silent) {
+  return fetchOrdersAPI()
+    .then(function (o) {
+      state.orders = o;
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(o)); } catch (e) {}
+      render();
+    })
+    .catch(function (err) {
+      if (!silent) toast(err.message || 'تعذر التحميل');
+    });
+}
+
+function render() {
+  var active = state.orders.filter(function (o) { return o.status !== ST[3]; });
+  var ended = state.orders.filter(function (o) { return o.status === ST[3]; });
+  $('t-active').textContent = 'الحالية (' + active.length + ')';
+  $('t-ended').textContent = 'منتهي (' + ended.length + ')';
+  $('t-active').classList.toggle('on', state.tab === 'active');
+  $('t-ended').classList.toggle('on', state.tab === 'ended');
+  $('chips').style.display = state.tab === 'active' ? 'flex' : 'none';
+  Array.prototype.forEach.call($('chips').children, function (b) {
+    b.classList.toggle('on', b.dataset.f === state.filter);
+  });
+
+  var rows = state.tab === 'active' ? active : ended;
+  if (state.tab === 'active' && state.filter !== 'all') rows = rows.filter(function (o) { return o.status === state.filter; });
+  var q = state.q.trim().toLowerCase();
+  if (q) rows = rows.filter(function (o) { return (o.no + ' ' + o.client).toLowerCase().indexOf(q) >= 0; });
+
+  var list = $('list'); list.textContent = '';
+  if (!rows.length) { list.appendChild(el('div', 'empty', 'لا توجد عروض')); return; }
+
+  rows.forEach(function (o) {
+    var i = ST.indexOf(o.status);
+    var c = el('button', 'card c' + i); c.type = 'button';
+    var r = el('div', 'row');
+    r.appendChild(el('span', 'no', '#' + o.no));
+    r.appendChild(el('span', 'tag st' + i, o.status));
+    c.appendChild(r);
+    c.appendChild(el('div', 'client', o.client || '—'));
+    var m = el('div', 'meta');
+    m.appendChild(el('span', '', '📅 ' + (o.date || '—')));
+    m.appendChild(el('span', '', '📦 ' + (o.cartons === '' ? '—' : o.cartons)));
+    var late = i < 2 && o.days >= 3;
+    m.appendChild(el('span', late ? 'late' : '', '⏳ ' + (o.days === 0 ? 'اليوم' : 'منذ ' + o.days + ' يوم')));
+    c.appendChild(m);
+    if (o.notes) c.appendChild(el('div', 'note', o.notes));
+    c.onclick = function () { openSheet(o.no); };
+    list.appendChild(c);
+  });
+}
+
+function openSheet(no) {
+  var o = state.orders.filter(function (x) { return x.no === no; })[0];
+  if (!o) return;
+  state.cur = o;
+  $('s-no').textContent = '#' + o.no;
+  $('s-client').textContent = o.client;
+  $('s-date').textContent = o.date + ' • آخر تغيير: ' + (o.changed || '—');
+  $('cartons').value = o.cartons;
+  $('notes').value = o.notes;
+  try { $('by').value = localStorage.getItem('by') || ''; } catch (e) { }
+  paint();
+  $('ov').classList.add('on');
+}
+
+function closeSheet() { $('ov').classList.remove('on'); state.cur = null; render(); }
+
+function paint() {
+  Array.prototype.forEach.call($('sg').children, function (b) {
+    b.classList.toggle('on', state.cur && b.textContent === state.cur.status);
+  });
+}
+
+function lock(v) {
+  Array.prototype.forEach.call($('sg').children, function (b) { b.disabled = v; });
+  ['cartons', 'notes', 'by'].forEach(function (id) { $(id).disabled = v; });
+}
+
+function save(status) {
+  var o = state.cur;
+  if (!o || state.busy) return;
+  state.busy = true; lock(true);
+  try { localStorage.setItem('by', $('by').value.trim()); } catch (e) { }
+  
+  updateOrderAPI(o.no, status, $('cartons').value.trim(), $('notes').value.trim(), $('by').value.trim())
+    .then(function (n) {
+      for (var i = 0; i < state.orders.length; i++) if (state.orders[i].no === o.no) state.orders[i] = n;
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(state.orders)); } catch (e) {}
+      state.cur = n; paint();
+      $('s-date').textContent = n.date + ' • آخر تغيير: ' + (n.changed || '—');
+      toast(status !== o.status ? 'تم تغيير الحالة وإرسال الإشعار ✓' : 'تم الحفظ ✓');
+    })
+    .catch(function (e) { toast('خطأ: ' + ((e && e.message) || e)); })
+    .then(function () { state.busy = false; lock(false); });
+}
+
+// ===== التهيئة =====
+(function init() {
+  // عرض البيانات المخزنة مؤقتاً فوراً لسرعة الفتح اللحظية
+  try {
+    var cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      state.orders = JSON.parse(cached);
+      render();
+    }
+  } catch (e) {}
+
+  var all = el('button', 'fc', 'الكل'); all.dataset.f = 'all'; $('chips').appendChild(all);
+  ST.slice(0, 3).forEach(function (s) { var b = el('button', 'fc', s); b.dataset.f = s; $('chips').appendChild(b); });
+  Array.prototype.forEach.call($('chips').children, function (b) {
+    b.onclick = function () { state.filter = b.dataset.f; render(); };
+  });
+  ST.forEach(function (s) {
+    var b = el('button', 'sb', s); b.type = 'button';
+    b.onclick = function () { save(s); };
+    $('sg').appendChild(b);
+  });
+  $('t-active').onclick = function () { state.tab = 'active'; render(); };
+  $('t-ended').onclick = function () { state.tab = 'ended'; render(); };
+  $('q').oninput = function (e) { state.q = e.target.value; render(); };
+  $('refresh').onclick = function () { load(false); };
+  $('close').onclick = closeSheet;
+  $('ov').onclick = function (e) { if (e.target === $('ov')) closeSheet(); };
+  $('cartons').onchange = function () { if (state.cur) save(state.cur.status); };
+  $('notes').onchange = function () { if (state.cur) save(state.cur.status); };
+
+  load(false);
+  setInterval(function () {
+    if (!document.hidden && !state.busy && !$('ov').classList.contains('on')) load(true);
+  }, 30000);
+})();
+</script>
+</body>
+</html>
